@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simon Rimbert — I build AI systems that replace manual work at scale</title>
+<meta name="description" content="Simon Rimbert. I take high-volume manual operations and turn them into lean, AI-powered systems. Then I help others do the same.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=Noto+Sans+JP:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ====================================================================
+   DESIGN SYSTEM — inherited from the Morning Compass artifact.
+   Theme variables, the bluegold default, the rounded "Maru" type,
+   paper backgrounds, 18px cards, layered shadows, the +/=/- leverage
+   marks. This site is a sibling of the Compass, by design.
+   ==================================================================== */
+:root{color-scheme:light;
+  --paper:#eef1fa;--paper2:#f7f8fe;--card:#fbfcff;
+  --ink:#001f7b;--ink-soft:#33417e;--ink-faint:#8089b4;
+  --accent:#001f7b;--accent-soft:#6c79c2;--accent-bg:#fff2cf;
+  --second:#b07f08;--second-bg:#fff4d4;--gold:#cf9400;
+  --line:#d6dbef;--line-soft:#e7eafa;
+  --shadow:0 2px 10px rgba(0,20,80,.10),0 1px 2px rgba(0,20,80,.06);
+  --shadow-lg:0 12px 40px rgba(0,20,80,.16),0 4px 12px rgba(0,20,80,.08);
+  --radius:18px;--radius-sm:12px;
+  --st-crit:#c0392b;--st-crit-bg:#fbeae8;
+  --st-block:#c98a16;--st-block-bg:#fbf1dd;
+  --st-motion:#2f6db0;--st-motion-bg:#e7f0fa;
+  --st-open:#b9c2ad;--st-open-bg:#f1f4ec}
+/* ---- themes (the Compass switcher set) ---- */
+body[data-theme="bluegold"]{--paper:#eef1fa;--paper2:#f7f8fe;--card:#fbfcff;--ink:#001f7b;--ink-soft:#33417e;--ink-faint:#8089b4;--accent:#001f7b;--accent-soft:#6c79c2;--accent-bg:#fff2cf;--second:#b07f08;--second-bg:#fff4d4;--gold:#cf9400;--line:#d6dbef;--line-soft:#e7eafa;--st-motion:#2f6db0;--st-motion-bg:#e7f0fa;--st-block:#c98a16;--st-block-bg:#fbf1dd;--st-open:#b9c2ad;--st-open-bg:#eef1fa}
+body[data-theme="royal"]{--paper:#eef3f9;--paper2:#f4feff;--card:#f9fcff;--ink:#001a4d;--ink-soft:#3a4d72;--ink-faint:#8090ad;--accent:#0e2f76;--accent-soft:#7e94c2;--accent-bg:#dde6f3;--second:#04326d;--second-bg:#e2e9f4;--gold:#5a6f9e;--line:#cfdaea;--line-soft:#e0e8f3;--st-motion:#2f6db0;--st-motion-bg:#e7f0fa;--st-block:#7a6cae;--st-block-bg:#e9e4f4;--st-open:#aeb8c8;--st-open-bg:#eef3f9}
+body[data-theme="sage"]{--paper:#eef3ea;--paper2:#f7faf4;--card:#fbfdf9;--ink:#1a2517;--ink-soft:#46553f;--ink-faint:#8a9882;--accent:#3f5a32;--accent-soft:#7d9a6c;--accent-bg:#e2ecdb;--second:#6d7d57;--second-bg:#e9f0e2;--gold:#7e8c4a;--line:#d8e2cf;--line-soft:#e6eede;--st-motion:#4a7a4a;--st-motion-bg:#e2ecdb;--st-block:#9a8a3a;--st-block-bg:#f0eccf;--st-open:#b9c2ad;--st-open-bg:#eef3ea}
+body[data-theme="lavender"]{--paper:#f1effc;--paper2:#faf9ff;--card:#ffffff;--ink:#2e2860;--ink-soft:#5b5392;--ink-faint:#9b94c4;--accent:#796bd8;--accent-soft:#b0a7ea;--accent-bg:#ece9fb;--second:#6a5fc0;--second-bg:#efedfb;--gold:#8a7fd0;--line:#ddd8f3;--line-soft:#ebe8fa;--st-motion:#6a5fc0;--st-motion-bg:#ece9fb;--st-block:#a07fc0;--st-block-bg:#efe4fb;--st-open:#bcb4d4;--st-open-bg:#f1effc}
+body[data-theme="redsoft"]{--paper:#fdf8e3;--paper2:#fffbef;--card:#fffdf6;--ink:#5a1008;--ink-soft:#8a3327;--ink-faint:#b08a7a;--accent:#ab1509;--accent-soft:#d4796e;--accent-bg:#fbe6df;--second:#9a5a12;--second-bg:#fdf1d2;--gold:#bf7a16;--line:#ecdcc0;--line-soft:#f4ead0;--st-motion:#b0552a;--st-motion-bg:#fbe6df;--st-block:#bf7a16;--st-block-bg:#fdf1d2;--st-open:#cbb89a;--st-open-bg:#fdf8e3}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:"Zen Maru Gothic",ui-rounded,"SF Pro Rounded",-apple-system,Georgia,serif;
+  background:radial-gradient(120% 90% at 15% -5%,rgba(255,255,255,.6),transparent 55%),var(--paper);
+  color:var(--ink);line-height:1.62;min-height:100vh;
+  transition:background .4s,color .4s;-webkit-font-smoothing:antialiased}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+
+/* ---------- top bar ---------- */
+.topbar{position:sticky;top:0;z-index:50;backdrop-filter:blur(10px);
+  background:color-mix(in srgb,var(--paper) 78%,transparent);
+  border-bottom:1px solid var(--line);transition:background .4s}
+.topbar .wrap{display:flex;align-items:center;justify-content:space-between;padding-top:11px;padding-bottom:11px;gap:14px}
+.brand{font-weight:900;letter-spacing:.02em;font-size:15px;color:var(--ink);text-decoration:none;white-space:nowrap}
+.brand .dot{color:var(--gold)}
+.nav{display:flex;gap:4px;flex-wrap:wrap;justify-content:flex-end;align-items:center}
+.nav a{font-size:12px;letter-spacing:.04em;color:var(--ink-soft);text-decoration:none;padding:5px 9px;border-radius:999px;transition:.18s;white-space:nowrap}
+.nav a:hover{background:var(--accent-bg);color:var(--ink)}
+.ctrl{display:flex;align-items:center;gap:7px}
+.ctrl select,.langbtn{font:inherit;font-size:11.5px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 11px;cursor:pointer;box-shadow:var(--shadow);transition:border .2s}
+.ctrl select:hover,.langbtn:hover{border-color:var(--accent-soft)}
+.langbtn{font-weight:700;letter-spacing:.06em}
+.langbtn .on{color:var(--gold)}
+
+/* ---------- section scaffolding ---------- */
+section{padding:54px 0 8px}
+.eyebrow{font-size:11px;letter-spacing:.34em;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.zone-head{display:flex;align-items:baseline;gap:14px;margin:0 2px 22px}
+.zone-head h2{font-size:26px;font-weight:900;letter-spacing:.01em;color:var(--ink)}
+.zone-head .rule{flex:1;height:1px;background:var(--line);align-self:center}
+.zone-head .idx{font-size:12px;color:var(--ink-faint);letter-spacing:.18em;font-weight:700}
+.lead{font-size:16px;color:var(--ink-soft);max-width:62ch;margin:0 2px 26px;line-height:1.72}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:transform .18s,box-shadow .18s,border-color .18s}
+
+/* ---------- HERO / tokonoma ---------- */
+.hero{padding-top:34px}
+.tokonoma{position:relative;overflow:hidden;border:1px solid var(--line);border-radius:26px;
+  background:linear-gradient(180deg,var(--paper2),var(--card));box-shadow:var(--shadow-lg);
+  padding:46px 44px 40px;transition:background .4s,border-color .4s}
+.tokonoma::before{content:"";position:absolute;inset:0;pointer-events:none;
+  background:radial-gradient(70% 130% at 100% 0%,var(--accent-bg),transparent 58%);opacity:.85}
+.tokonoma::after{content:"";position:absolute;right:-60px;bottom:-80px;width:340px;height:340px;border-radius:50%;
+  background:radial-gradient(circle,var(--accent-bg),transparent 70%);opacity:.5;pointer-events:none}
+.hero-inner{position:relative;z-index:1}
+.almanac{font-size:11px;letter-spacing:.3em;color:var(--gold);text-transform:uppercase;font-weight:700;margin-bottom:18px;display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.almanac b{color:var(--ink-soft);font-weight:700}
+.almanac .sep{color:var(--line);font-weight:400}
+.hero h1{font-size:clamp(30px,5.2vw,52px);font-weight:900;line-height:1.08;letter-spacing:-.01em;color:var(--ink);max-width:18ch}
+.hero h1 .hl{position:relative;white-space:nowrap}
+.hero h1 .hl::after{content:"";position:absolute;left:-2px;right:-2px;bottom:.08em;height:.34em;background:var(--accent-bg);z-index:-1;border-radius:3px}
+.hero .sub{margin-top:20px;font-size:17px;color:var(--ink-soft);max-width:60ch;line-height:1.7}
+.hero .sub b{color:var(--ink);font-weight:700}
+.hero-cta{margin-top:26px;display:flex;gap:11px;flex-wrap:wrap}
+.btn{font:inherit;font-weight:700;font-size:13.5px;letter-spacing:.02em;text-decoration:none;padding:11px 19px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--shadow);cursor:pointer;transition:.18s;display:inline-flex;align-items:center;gap:8px}
+.btn:hover{transform:translateY(-1px);box-shadow:var(--shadow-lg);border-color:var(--accent-soft)}
+.btn.primary{background:var(--ink);color:var(--paper2);border-color:var(--ink)}
+.btn.primary:hover{background:var(--accent-soft)}
+
+/* triad chips */
+.triad{margin-top:30px;display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.triad .t{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--gold);border-radius:var(--radius-sm);padding:14px 16px;box-shadow:var(--shadow)}
+.triad .t .k{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.triad .t .v{font-size:15px;font-weight:700;color:var(--ink);margin-top:4px}
+.triad .t .d{font-size:12.5px;color:var(--ink-soft);margin-top:3px;line-height:1.5}
+
+/* ---------- stat band ---------- */
+.statband{margin-top:16px;display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.statband .s{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:18px 16px;box-shadow:var(--shadow);text-align:center}
+.statband .s .n{font-size:30px;font-weight:900;color:var(--ink);line-height:1;font-variant-numeric:tabular-nums}
+.statband .s .n .u{font-size:18px;color:var(--gold)}
+.statband .s .l{font-size:11.5px;color:var(--ink-soft);margin-top:7px;letter-spacing:.02em;line-height:1.4}
+
+/* ---------- generic prose card ---------- */
+.prose{font-size:15px;color:var(--ink-soft);line-height:1.74}
+.prose b{color:var(--ink);font-weight:700}
+.muted{color:var(--ink-faint);font-size:12.5px}
+
+/* utility */
+.lang-fr{display:none}
+body.fr .lang-en{display:none}
+body.fr .lang-fr{display:initial}
+body.fr .zone-head h2 .lang-fr,body.fr .hero h1 .lang-fr{display:inline}
+.center{text-align:center}
+footer{margin-top:60px;padding:40px 0;border-top:1px solid var(--line);color:var(--ink-faint);font-size:12.5px}
+footer .wrap{display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px;align-items:center}
+footer a{color:var(--ink-soft);text-decoration:none}
+footer a:hover{color:var(--gold)}
+
+/* reveal on scroll */
+.reveal{opacity:0;transform:translateY(18px);transition:opacity .6s ease,transform .6s ease}
+.reveal.in{opacity:1;transform:none}
+
+/* ============ SECTION COMPONENTS ============ */
+/* --- artifact gallery (what I've built) --- */
+.builtgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.artifact{position:relative;overflow:hidden;padding:22px 22px 20px;border-left:4px solid var(--gold);display:flex;flex-direction:column}
+.artifact:hover{transform:translateY(-3px);box-shadow:var(--shadow-lg)}
+.artifact .tag{font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:700}
+.artifact h3{font-size:18px;font-weight:900;color:var(--ink);margin:7px 0 3px;line-height:1.25}
+.artifact .role{font-size:12px;color:var(--ink-faint);font-weight:700;margin-bottom:9px}
+.artifact p{font-size:13.5px;color:var(--ink-soft);line-height:1.6;flex:1}
+.artifact .metric{margin-top:13px;display:flex;gap:8px;flex-wrap:wrap}
+.chip{font-size:11.5px;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--accent-bg);color:var(--second);white-space:nowrap}
+.chip.blue{background:var(--st-motion-bg);color:var(--st-motion)}
+.artifact.wide{grid-column:1/-1;border-left-color:var(--accent-soft)}
+.artifact.wide .thumb{margin-top:14px}
+
+/* mini compass thumbnail (rendered, fake data) */
+.thumb{border:1px solid var(--line);border-radius:var(--radius-sm);overflow:hidden;background:var(--paper2);box-shadow:inset 0 1px 4px rgba(0,20,80,.05)}
+.cmp{padding:14px 16px}
+.cmp-top{display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--line-soft);padding-bottom:9px;margin-bottom:10px}
+.cmp-top .ttl{font-size:13px;font-weight:900;color:var(--ink);letter-spacing:.02em}
+.cmp-top .dt{font-size:10px;color:var(--gold);letter-spacing:.2em;text-transform:uppercase;font-weight:700}
+.cmp-tally{display:flex;gap:14px;margin-bottom:11px}
+.cmp-tally .seg{font-size:11px;color:var(--ink-soft);display:flex;align-items:center;gap:5px}
+.cmp-tally .k{width:16px;height:16px;border-radius:5px;font-size:11px;font-weight:800;line-height:16px;text-align:center;display:inline-block}
+.k-plus{background:var(--st-motion-bg);color:var(--st-motion)}
+.k-eq{background:var(--st-open-bg);color:var(--ink-faint)}
+.k-minus{background:var(--st-block-bg);color:var(--st-block)}
+.cmp-row{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-top:1px solid var(--line-soft)}
+.cmp-row .pip{flex:0 0 auto;width:13px;height:13px;border-radius:50%;margin-top:3px;border:2px solid var(--line);background:var(--paper2)}
+.cmp-row.crit .pip{border-color:var(--st-crit);background:var(--st-crit-bg)}
+.cmp-row.motion .pip{border-color:var(--st-motion);background:radial-gradient(circle,var(--st-motion) 0 38%,transparent 40%)}
+.cmp-row .lev{flex:0 0 auto;width:16px;height:16px;border-radius:5px;font-size:11px;font-weight:800;line-height:16px;text-align:center;margin-top:1px}
+.cmp-row .txt{font-size:12px;color:var(--ink);font-weight:700;line-height:1.4}
+.cmp-row .txt .why{display:block;font-size:10.5px;color:var(--ink-faint);font-weight:400;margin-top:1px}
+
+/* --- before/after split --- */
+.split{display:grid;grid-template-columns:1fr auto 1fr;gap:0;align-items:stretch;margin-top:6px}
+.split .side{padding:20px 22px}
+.split .before{background:var(--st-crit-bg);border:1px solid var(--line);border-right:none;border-radius:var(--radius) 0 0 var(--radius)}
+.split .after{background:var(--st-motion-bg);border:1px solid var(--line);border-left:none;border-radius:0 var(--radius) var(--radius) 0}
+.split .arrow{display:flex;align-items:center;justify-content:center;padding:0 4px;font-size:24px;color:var(--gold);background:var(--card);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.split .lbl{font-size:11px;letter-spacing:.16em;text-transform:uppercase;font-weight:700;margin-bottom:10px}
+.split .before .lbl{color:var(--st-crit)}
+.split .after .lbl{color:var(--st-motion)}
+.split ul{list-style:none}
+.split li{font-size:13px;color:var(--ink-soft);padding:5px 0 5px 18px;position:relative;line-height:1.5}
+.split li::before{content:"";position:absolute;left:0;top:11px;width:6px;height:6px;border-radius:50%;background:currentColor;opacity:.4}
+.split .after li{color:var(--ink)}
+
+/* --- pipeline flow --- */
+.flow{display:flex;align-items:stretch;gap:0;flex-wrap:wrap;margin-top:8px}
+.flow .step{flex:1;min-width:120px;background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:15px 14px;box-shadow:var(--shadow);position:relative;margin:6px}
+.flow .step .n{font-size:10px;letter-spacing:.2em;color:var(--gold);font-weight:700;text-transform:uppercase}
+.flow .step h4{font-size:14px;font-weight:900;color:var(--ink);margin:5px 0 4px}
+.flow .step p{font-size:12px;color:var(--ink-soft);line-height:1.5}
+
+/* --- case study callout --- */
+.callout{border-left:4px solid var(--accent);padding:22px 26px;background:linear-gradient(180deg,var(--paper2),var(--card))}
+.callout .ctag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);font-weight:700;margin-bottom:8px}
+.callout h3{font-size:19px;font-weight:900;color:var(--ink);margin-bottom:10px}
+.callout .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:16px}
+.callout .steps .cs{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);padding:12px 13px}
+.callout .steps .cs .csn{font-size:18px;font-weight:900;color:var(--gold)}
+.callout .steps .cs .cst{font-size:12px;color:var(--ink-soft);margin-top:4px;line-height:1.45}
+
+/* --- expansion map --- */
+.maprow{display:grid;grid-template-columns:1.1fr 1fr;gap:16px;align-items:start}
+.locgrid{display:flex;flex-wrap:wrap;gap:7px;margin-top:4px}
+.loc{font-size:12px;font-weight:700;padding:6px 11px;border-radius:9px;border:1px solid var(--line);background:var(--card);color:var(--ink);box-shadow:var(--shadow);transition:.16s;cursor:default}
+.loc:hover{transform:translateY(-2px);border-color:var(--gold)}
+.loc.fresh{border-left:3px solid var(--st-motion)}
+.loc.adapt{border-left:3px solid var(--gold)}
+.loc.special{border-left:3px solid var(--accent)}
+.famcard{background:var(--card);border:1px solid var(--line);border-radius:var(--radius-sm);box-shadow:var(--shadow);padding:15px 17px;margin-bottom:11px}
+.famcard .fh{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px}
+.famcard .fh h4{font-size:14.5px;font-weight:900;color:var(--ink)}
+.famcard .fh .ct{font-size:11px;color:var(--gold);font-weight:700;letter-spacing:.08em}
+.famcard p{font-size:12.5px;color:var(--ink-soft);line-height:1.55}
+
+/* --- enablement grid --- */
+.engrid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.encard{padding:20px 22px;border-top:4px solid var(--gold)}
+.encard h3{font-size:16px;font-weight:900;color:var(--ink);margin-bottom:3px}
+.encard .ek{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:9px}
+.encard p{font-size:13px;color:var(--ink-soft);line-height:1.6}
+.encard.full{grid-column:1/-1;border-top-color:var(--accent)}
+
+/* --- leverage / compounding --- */
+.levwrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}
+.levkey{padding:20px 22px}
+.levkey .lk{display:flex;gap:12px;align-items:flex-start;padding:11px 0;border-top:1px solid var(--line-soft)}
+.levkey .lk:first-of-type{border-top:none}
+.levkey .lk .m{flex:0 0 auto;width:26px;height:26px;border-radius:8px;font-size:16px;font-weight:900;line-height:26px;text-align:center}
+.levkey .lk .m.plus{background:var(--st-motion-bg);color:var(--st-motion)}
+.levkey .lk .m.eq{background:var(--st-open-bg);color:var(--ink-faint)}
+.levkey .lk .m.minus{background:var(--st-block-bg);color:var(--st-block)}
+.levkey .lk .d b{color:var(--ink);font-weight:700;display:block;font-size:13.5px}
+.levkey .lk .d span{font-size:12.5px;color:var(--ink-soft);line-height:1.5}
+.levbar{padding:20px 22px}
+.levbar h4{font-size:13px;font-weight:900;color:var(--ink);margin-bottom:4px}
+.levbar .barwrap{margin:14px 0}
+.levbar .barlbl{display:flex;justify-content:space-between;font-size:12px;margin-bottom:5px;color:var(--ink-soft)}
+.levbar .barlbl b{color:var(--ink)}
+.bar{height:13px;border-radius:7px;background:var(--line-soft);overflow:hidden;display:flex}
+.bar .bp{background:var(--st-motion)}.bar .be{background:var(--st-open)}.bar .bm{background:var(--st-block)}
+
+/* --- timeline --- */
+.timeline{position:relative;margin-top:8px;padding-left:4px}
+.tl{display:grid;grid-template-columns:90px 1fr;gap:16px;padding:14px 0;border-top:1px solid var(--line-soft);align-items:start}
+.tl:first-child{border-top:none}
+.tl .yr{font-size:13px;font-weight:900;color:var(--gold);letter-spacing:.04em;padding-top:1px}
+.tl .co{font-size:15px;font-weight:900;color:var(--ink)}
+.tl .ro{font-size:12.5px;color:var(--ink-faint);font-weight:700;margin:1px 0 5px}
+.tl .ds{font-size:13px;color:var(--ink-soft);line-height:1.55}
+
+/* --- about / interests --- */
+.aboutgrid{display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+.intlist{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.int{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;background:var(--card);border:1px solid var(--line);color:var(--ink-soft);box-shadow:var(--shadow)}
+.int:hover{color:var(--gold);border-color:var(--gold)}
+.minifact{padding:18px 20px}
+.minifact .mf{display:flex;justify-content:space-between;padding:8px 0;border-top:1px solid var(--line-soft);font-size:13px}
+.minifact .mf:first-child{border-top:none}
+.minifact .mf .l{color:var(--ink-faint)}
+.minifact .mf .v{color:var(--ink);font-weight:700;text-align:right}
+.padcard{padding:22px 24px}
+
+@media(max-width:760px){
+  .triad,.statband{grid-template-columns:1fr 1fr}
+  .tokonoma{padding:32px 24px}
+  .nav{display:none}
+  section{padding:40px 0 6px}
+  .builtgrid,.engrid,.levwrap,.maprow,.aboutgrid{grid-template-columns:1fr}
+  .callout .steps{grid-template-columns:1fr 1fr}
+  .split{grid-template-columns:1fr;}
+  .split .before{border-radius:var(--radius) var(--radius) 0 0;border-right:1px solid var(--line)}
+  .split .after{border-radius:0 0 var(--radius) var(--radius);border-left:1px solid var(--line);border-top:none}
+  .split .arrow{transform:rotate(90deg);border:1px solid var(--line);border-top:none;border-bottom:none;padding:6px 0}
+  .tl{grid-template-columns:64px 1fr;gap:11px}
+}
+@media(max-width:460px){
+  .statband,.triad{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-theme="bluegold">
+
+<!-- ============ TOP BAR ============ -->
+<div class="topbar">
+  <div class="wrap">
+    <a href="#top" class="brand">Simon Rimbert<span class="dot">.</span></a>
+    <nav class="nav">
+      <a href="#built">Built</a>
+      <a href="#pipeline">Pipeline</a>
+      <a href="#expansion">Expansion</a>
+      <a href="#enablement">Enablement</a>
+      <a href="#compounding">Compounding</a>
+      <a href="#about">About</a>
+    </nav>
+    <div class="ctrl">
+      <button class="langbtn" id="langbtn" onclick="toggleLang()"><span class="on" id="lang-en-lbl">EN</span> / <span id="lang-fr-lbl">FR</span></button>
+      <select id="theme" aria-label="Theme" onchange="setTheme(this.value)">
+        <option value="bluegold">Blue / Gold</option>
+        <option value="royal">Royal</option>
+        <option value="sage">Sage</option>
+        <option value="lavender">Lavender</option>
+        <option value="redsoft">Warm Red</option>
+      </select>
+    </div>
+  </div>
+</div>
+
+<a id="top"></a>
+<!-- ============ HERO ============ -->
+<header class="hero">
+  <div class="wrap">
+    <div class="tokonoma reveal">
+      <div class="hero-inner">
+        <div class="almanac">
+          <span class="lang-en">AI-First Operations</span><span class="lang-fr">Opérations AI-First</span>
+          <span class="sep">·</span>
+          <b class="lang-en">Builder &amp; Scaler</b><b class="lang-fr">Bâtisseur &amp; Passeur d'échelle</b>
+          <span class="sep">·</span>
+          <span class="lang-en">Paris</span><span class="lang-fr">Paris</span>
+        </div>
+
+        <h1>
+          <span class="lang-en">I turn manual operations into <span class="hl">AI systems</span> that run themselves.</span>
+          <span class="lang-fr">Je transforme les opérations manuelles en <span class="hl">systèmes IA</span> qui tournent seuls.</span>
+        </h1>
+
+        <p class="sub">
+          <span class="lang-en">For 8 years I've run BlaBlaCar's localization as a <b>one-person function</b> across 18+ markets and 5 departments. I rebuilt it into an AI-driven pipeline, then started doing the same thing for the rest of the company. <b>Then I help others do it too.</b></span>
+          <span class="lang-fr">Depuis 8 ans je fais tourner la localisation de BlaBlaCar en <b>fonction d'une seule personne</b>, sur 18+ marchés et 5 départements. Je l'ai reconstruite en pipeline piloté par l'IA, puis j'ai commencé à faire pareil pour le reste de l'entreprise. <b>Et j'aide les autres à le faire aussi.</b></span>
+        </p>
+
+        <div class="hero-cta">
+          <a class="btn primary" href="#built"><span class="lang-en">See what I've built</span><span class="lang-fr">Voir ce que j'ai construit</span> →</a>
+          <a class="btn" href="https://www.linkedin.com/in/simonrimbert-61028530" target="_blank" rel="noopener">LinkedIn ↗</a>
+        </div>
+
+        <div class="triad">
+          <div class="t">
+            <div class="k"><span class="lang-en">Builder</span><span class="lang-fr">Bâtisseur</span></div>
+            <div class="v"><span class="lang-en">0 → 1</span><span class="lang-fr">0 → 1</span></div>
+            <div class="d"><span class="lang-en">I build the system that didn't exist — pipeline, tool, gate, asset.</span><span class="lang-fr">Je construis le système qui n'existait pas — pipeline, outil, garde-fou, asset.</span></div>
+          </div>
+          <div class="t">
+            <div class="k"><span class="lang-en">Scaler</span><span class="lang-fr">Passeur d'échelle</span></div>
+            <div class="v"><span class="lang-en">1 → many</span><span class="lang-fr">1 → beaucoup</span></div>
+            <div class="d"><span class="lang-en">Then I make it usable by people who can't code, and step away.</span><span class="lang-fr">Puis je le rends utilisable par des non-codeurs, et je m'efface.</span></div>
+          </div>
+          <div class="t">
+            <div class="k"><span class="lang-en">Selfless</span><span class="lang-fr">Au service</span></div>
+            <div class="v"><span class="lang-en">help, hand off</span><span class="lang-fr">aider, transmettre</span></div>
+            <div class="d"><span class="lang-en">The win is the team running it without me — not me holding the keys.</span><span class="lang-fr">La réussite, c'est l'équipe qui tourne sans moi — pas moi qui garde les clés.</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- stat band -->
+    <div class="statband reveal">
+      <div class="s"><div class="n" data-count="40" data-suffix="%">0<span class="u">%</span></div><div class="l"><span class="lang-en">translation cost cut, no quality loss</span><span class="lang-fr">coûts de traduction réduits, sans perte de qualité</span></div></div>
+      <div class="s"><div class="n" data-count="22" data-suffix="%">0<span class="u">%</span></div><div class="l"><span class="lang-en">faster turnaround</span><span class="lang-fr">délais raccourcis</span></div></div>
+      <div class="s"><div class="n" data-count="500" data-suffix="K+">0<span class="u">K+</span></div><div class="l"><span class="lang-en">words localized per year</span><span class="lang-fr">mots localisés par an</span></div></div>
+      <div class="s"><div class="n" data-count="18" data-suffix="+">0<span class="u">+</span></div><div class="l"><span class="lang-en">markets, run solo</span><span class="lang-fr">marchés, gérés en solo</span></div></div>
+    </div>
+  </div>
+</header>
+
+<!-- ============ SECTIONS ============ -->
+<main id="sections">
+
+<!-- ===== 1. WHAT I'VE BUILT (lead with artifacts to peak interest) ===== -->
+<section id="built">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">Things I made that didn't exist before</span><span class="lang-fr">Des choses que j'ai faites et qui n'existaient pas</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">What I've built</span><span class="lang-fr">Ce que j'ai construit</span></h2><span class="rule"></span><span class="idx">01</span></div>
+    <p class="lead reveal"><span class="lang-en">I don't write decks about automation. I ship the thing. Each of these is a working system in daily use — built, owned, and in most cases handed to someone else to run.</span><span class="lang-fr">Je ne fais pas des slides sur l'automatisation. Je livre la chose. Chacun de ces systèmes tourne au quotidien — construit, possédé, et le plus souvent confié à quelqu'un d'autre.</span></p>
+
+    <div class="builtgrid reveal">
+
+      <!-- wide: the operating dashboard -->
+      <div class="artifact card wide">
+        <div class="tag"><span class="lang-en">Personal operating system</span><span class="lang-fr">Système d'opération personnel</span></div>
+        <h3><span class="lang-en">The Morning Compass</span><span class="lang-fr">La Boussole du matin</span></h3>
+        <div class="role"><span class="lang-en">A daily dashboard that reads my task list and tells me where my hours actually go</span><span class="lang-fr">Un tableau de bord quotidien qui lit ma liste de tâches et me dit où passent vraiment mes heures</span></div>
+        <p><span class="lang-en">Every morning it surfaces today's focus and open loops from a single source of truth — and tags each task with a career-leverage mark: <b>+</b> compounds, <b>=</b> holds position, <b>−</b> resets to zero. The point isn't to-do management. It's reading the <i>mix</i>: a week heavy in <b>−</b> means I'm running the function, not growing past it. (Demo below — real data lives privately.)</span><span class="lang-fr">Chaque matin il fait remonter le focus du jour et les boucles ouvertes depuis une source unique — et marque chaque tâche d'un signe de levier de carrière : <b>+</b> capitalise, <b>=</b> tient la position, <b>−</b> remet à zéro. Le but n'est pas la gestion de tâches. C'est de lire le <i>mélange</i> : une semaine lourde en <b>−</b> veut dire que je fais tourner la fonction sans la dépasser. (Démo ci-dessous — données réelles privées.)</span></p>
+        <div class="thumb">
+          <div class="cmp">
+            <div class="cmp-top"><span class="ttl"><span class="lang-en">Today's focus</span><span class="lang-fr">Focus du jour</span></span><span class="dt"><span class="lang-en">Sample view</span><span class="lang-fr">Vue d'exemple</span></span></div>
+            <div class="cmp-tally">
+              <span class="seg"><span class="k k-plus">+</span> 3 <span class="lang-en">&nbsp;compounds</span><span class="lang-fr">&nbsp;capitalise</span></span>
+              <span class="seg"><span class="k k-eq">=</span> 2 <span class="lang-en">&nbsp;holds</span><span class="lang-fr">&nbsp;tient</span></span>
+              <span class="seg"><span class="k k-minus">−</span> 1 <span class="lang-en">&nbsp;toil</span><span class="lang-fr">&nbsp;corvée</span></span>
+            </div>
+            <div class="cmp-row motion"><span class="pip"></span><span class="lev k-plus">+</span><span class="txt"><span class="lang-en">Ship the self-installing knowledge system</span><span class="lang-fr">Livrer le système de connaissances auto-installable</span><span class="why"><span class="lang-en">durable leverage — a tool that keeps paying</span><span class="lang-fr">levier durable — un outil qui continue de rapporter</span></span></span></div>
+            <div class="cmp-row motion"><span class="pip"></span><span class="lev k-plus">+</span><span class="txt"><span class="lang-en">Run the hands-on AI workshop</span><span class="lang-fr">Animer l'atelier IA en pratique</span><span class="why"><span class="lang-en">next-role profile — enablement at scale</span><span class="lang-fr">profil prochain rôle — montée en compétence à l'échelle</span></span></span></div>
+            <div class="cmp-row"><span class="pip"></span><span class="lev k-eq">=</span><span class="txt"><span class="lang-en">Weekly translation batch</span><span class="lang-fr">Lot de traduction hebdo</span><span class="why"><span class="lang-en">necessary run-work — holds the line</span><span class="lang-fr">run nécessaire — tient la ligne</span></span></span></div>
+            <div class="cmp-row crit"><span class="pip"></span><span class="lev k-minus">−</span><span class="txt"><span class="lang-en">Chase an access request</span><span class="lang-fr">Relancer une demande d'accès</span><span class="why"><span class="lang-en">delegate / automate — don't let it eat a morning</span><span class="lang-fr">déléguer / automatiser — ne pas y perdre une matinée</span></span></span></div>
+          </div>
+        </div>
+        <div class="metric"><span class="chip"><span class="lang-en">Self-built</span><span class="lang-fr">Auto-construit</span></span><span class="chip blue"><span class="lang-en">Live daily</span><span class="lang-fr">En usage quotidien</span></span><span class="chip"><span class="lang-en">Soon on GitHub</span><span class="lang-fr">Bientôt sur GitHub</span></span></div>
+      </div>
+
+      <!-- self-installing second brain -->
+      <div class="artifact card">
+        <div class="tag"><span class="lang-en">AI knowledge system</span><span class="lang-fr">Système de connaissances IA</span></div>
+        <h3><span class="lang-en">Self-installing second brain</span><span class="lang-fr">Second cerveau auto-installable</span></h3>
+        <div class="role"><span class="lang-en">One prompt stands up a whole self-organizing knowledge base</span><span class="lang-fr">Un seul prompt déploie une base de connaissances auto-organisée</span></div>
+        <p><span class="lang-en">Drop a meeting transcript in and the information routes <i>itself</i> to the right project folders — even when one meeting touches several projects. No tags to apply, no filing to do. The asset compounds: tell it who someone is once, and the name resolves forever. I built it, then taught my department to build their own.</span><span class="lang-fr">Déposez une transcription de réunion et l'information se range <i>elle-même</i> dans les bons dossiers — même quand une réunion touche plusieurs projets. Aucun tag à poser, aucun classement à faire. L'asset capitalise : dites-lui une fois qui est quelqu'un, le nom se résout pour toujours. Je l'ai construit, puis j'ai appris à mon département à construire le sien.</span></p>
+        <div class="metric"><span class="chip blue"><span class="lang-en">Taught department-wide</span><span class="lang-fr">Enseigné au département</span></span><span class="chip"><span class="lang-en">One prompt, no install</span><span class="lang-fr">Un prompt, sans installation</span></span></div>
+      </div>
+
+      <!-- AI in a tool people already have -->
+      <div class="artifact card">
+        <div class="tag"><span class="lang-en">AI for non-coders</span><span class="lang-fr">IA pour non-codeurs</span></div>
+        <h3><span class="lang-en">Plain-English data tooling</span><span class="lang-fr">Outils data en langage naturel</span></h3>
+        <div class="role"><span class="lang-en">A researcher running surveys from plain English, zero engineering</span><span class="lang-fr">Une chercheuse qui pilote ses enquêtes en langage naturel, sans ingénierie</span></div>
+        <p><span class="lang-en">I gave a non-technical colleague the ability to list, read and build her own surveys just by asking — inside a tool she already had, with no server to host and no install. The architecture is the flex: a user-owned skill plus a tiny local helper, shipped as one drop-in folder. AI made usable by the person who needs it, not by IT.</span><span class="lang-fr">J'ai donné à une collègue non technique le pouvoir de lister, lire et créer ses propres enquêtes en demandant simplement — dans un outil qu'elle avait déjà, sans serveur à héberger ni installation. L'architecture est l'astuce : une compétence possédée par l'utilisatrice plus un petit assistant local, livrés en un dossier à déposer. L'IA rendue utilisable par la personne qui en a besoin, pas par l'IT.</span></p>
+        <div class="metric"><span class="chip"><span class="lang-en">No server, no hosting</span><span class="lang-fr">Sans serveur ni hébergement</span></span><span class="chip blue"><span class="lang-en">Shipped to a real user</span><span class="lang-fr">Livré à une vraie utilisatrice</span></span></div>
+      </div>
+
+      <!-- onboarding artifact -->
+      <div class="artifact card">
+        <div class="tag"><span class="lang-en">Knowledge transfer</span><span class="lang-fr">Transmission</span></div>
+        <h3><span class="lang-en">Interactive onboarding system</span><span class="lang-fr">Système d'onboarding interactif</span></h3>
+        <div class="role"><span class="lang-en">Turned a function that lived in my head into something a new hire can run solo</span><span class="lang-fr">J'ai transformé une fonction qui vivait dans ma tête en quelque chose qu'une recrue peut faire tourner seule</span></div>
+        <p><span class="lang-en">A whole operational loop — daily intake, the translation methods, job grouping, publishing, the linguist question loop, delivery — existed only as tacit knowledge. I captured it as one reference, then built an interactive onboarding artifact a new colleague works through card by card, so the function survives me being away. Building the doc doubled as building the improvement backlog.</span><span class="lang-fr">Toute une boucle opérationnelle — intake quotidien, méthodes de traduction, regroupement de jobs, publication, boucle de questions linguistes, livraison — n'existait qu'en savoir tacite. Je l'ai capturée en une référence, puis j'ai construit un artefact d'onboarding interactif qu'une nouvelle recrue parcourt carte par carte, pour que la fonction survive à mon absence. Écrire le doc, c'était aussi écrire le backlog d'amélioration.</span></p>
+        <div class="metric"><span class="chip"><span class="lang-en">Tacit → transferable</span><span class="lang-fr">Tacite → transmissible</span></span><span class="chip blue"><span class="lang-en">De-risks a handover</span><span class="lang-fr">Sécurise une passation</span></span></div>
+      </div>
+
+      <!-- the enforcement gate -->
+      <div class="artifact card">
+        <div class="tag"><span class="lang-en">Quality engineering</span><span class="lang-fr">Ingénierie qualité</span></div>
+        <h3><span class="lang-en">The enforcement gate</span><span class="lang-fr">Le garde-fou automatique</span></h3>
+        <div class="role"><span class="lang-en">When a reminder isn't enough, build the gate</span><span class="lang-fr">Quand un rappel ne suffit pas, construire le garde-fou</span></div>
+        <p><span class="lang-en">A reviewer kept catching the same translation error. The rule was already written — as a soft instruction the model occasionally ignored. So I built a programmatic check that blocks the banned output before it ships, sourced from the language data so reviewers maintain it themselves, not the code. A recurring manual catch-and-correct loop became a zero-touch check. The lesson generalizes: recurring errors need a gate, not more reminding.</span><span class="lang-fr">Une relectrice attrapait toujours la même erreur de traduction. La règle était déjà écrite — en consigne souple que le modèle ignorait parfois. J'ai donc construit un contrôle programmatique qui bloque la sortie interdite avant livraison, alimenté par les données de langue pour que les relecteurs le maintiennent eux-mêmes, pas le code. Une boucle manuelle récurrente est devenue un contrôle sans intervention. La leçon se généralise : une erreur récurrente exige un garde-fou, pas plus de rappels.</span></p>
+        <div class="metric"><span class="chip"><span class="lang-en">Data-driven, not hardcoded</span><span class="lang-fr">Piloté par les données</span></span><span class="chip blue"><span class="lang-en">Zero-touch</span><span class="lang-fr">Sans intervention</span></span></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===== 2. THE PIPELINE (the $$ + time story) ===== -->
+<section id="pipeline">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">The core engine</span><span class="lang-fr">Le moteur central</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">An AI translation pipeline, run solo</span><span class="lang-fr">Un pipeline de traduction IA, géré en solo</span></h2><span class="rule"></span><span class="idx">02</span></div>
+    <p class="lead reveal"><span class="lang-en">The day job, rebuilt. I took a high-volume, agency-dependent, manual operation and turned it into a largely automated pipeline — handling 500K+ words a year across 18+ markets, as one person. The numbers below are conservative, public figures.</span><span class="lang-fr">Le métier, reconstruit. J'ai pris une opération manuelle à fort volume, dépendante d'agences, et l'ai transformée en pipeline largement automatisé — 500K+ mots par an sur 18+ marchés, à une seule personne. Les chiffres ci-dessous sont prudents et publics.</span></p>
+
+    <div class="split reveal">
+      <div class="side before">
+        <div class="lbl"><span class="lang-en">Before</span><span class="lang-fr">Avant</span></div>
+        <ul>
+          <li><span class="lang-en">Agency-dependent, per-word cost</span><span class="lang-fr">Dépendant des agences, coût au mot</span></li>
+          <li><span class="lang-en">Manual handoffs at every step</span><span class="lang-fr">Transferts manuels à chaque étape</span></li>
+          <li><span class="lang-en">Cost rises in lockstep with volume</span><span class="lang-fr">Le coût monte avec le volume</span></li>
+          <li><span class="lang-en">~7-day turnaround</span><span class="lang-fr">Délai ~7 jours</span></li>
+        </ul>
+      </div>
+      <div class="arrow">→</div>
+      <div class="side after">
+        <div class="lbl"><span class="lang-en">After</span><span class="lang-fr">Après</span></div>
+        <ul>
+          <li><span class="lang-en">AI pre-translation + human refinement</span><span class="lang-fr">Pré-traduction IA + raffinage humain</span></li>
+          <li><span class="lang-en">Automated intake → translate → publish</span><span class="lang-fr">Intake → traduire → publier, automatisé</span></li>
+          <li><span class="lang-en">Volume decoupled from cost</span><span class="lang-fr">Volume découplé du coût</span></li>
+          <li><span class="lang-en">Faster, with no quality loss</span><span class="lang-fr">Plus rapide, sans perte de qualité</span></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="statband reveal" style="margin-top:22px">
+      <div class="s"><div class="n" data-count="40" data-suffix="%">0<span class="u">%</span></div><div class="l"><span class="lang-en">lower translation cost</span><span class="lang-fr">coût de traduction en moins</span></div></div>
+      <div class="s"><div class="n" data-count="22" data-suffix="%">0<span class="u">%</span></div><div class="l"><span class="lang-en">faster turnaround</span><span class="lang-fr">délais en moins</span></div></div>
+      <div class="s"><div class="n" data-count="20" data-suffix="+">0<span class="u">+</span></div><div class="l"><span class="lang-en">hours of manual work removed / month</span><span class="lang-fr">heures de travail manuel retirées / mois</span></div></div>
+      <div class="s"><div class="n" data-count="10" data-suffix="+">0<span class="u">+</span></div><div class="l"><span class="lang-en">automation workflows engineered</span><span class="lang-fr">workflows d'automatisation construits</span></div></div>
+    </div>
+
+    <div class="flow reveal" style="margin-top:24px">
+      <div class="step"><div class="n">01</div><h4><span class="lang-en">Intake</span><span class="lang-fr">Intake</span></h4><p><span class="lang-en">Requests arrive, get triaged and routed automatically.</span><span class="lang-fr">Les demandes arrivent, sont triées et routées automatiquement.</span></p></div>
+      <div class="step"><div class="n">02</div><h4><span class="lang-en">AI translate</span><span class="lang-fr">Traduction IA</span></h4><p><span class="lang-en">The engine pre-translates with the glossary, rules and approved examples baked in.</span><span class="lang-fr">Le moteur pré-traduit avec glossaire, règles et exemples validés intégrés.</span></p></div>
+      <div class="step"><div class="n">03</div><h4><span class="lang-en">QA gates</span><span class="lang-fr">Contrôles QA</span></h4><p><span class="lang-en">Programmatic checks catch the mechanical errors humans miss.</span><span class="lang-fr">Des contrôles programmatiques attrapent les erreurs mécaniques que l'humain rate.</span></p></div>
+      <div class="step"><div class="n">04</div><h4><span class="lang-en">Human refine</span><span class="lang-fr">Raffinage humain</span></h4><p><span class="lang-en">A native linguist refines — spend shifts from low-value to high-value work.</span><span class="lang-fr">Un linguiste natif raffine — la dépense passe du faible au fort valeur ajoutée.</span></p></div>
+      <div class="step"><div class="n">05</div><h4><span class="lang-en">Publish</span><span class="lang-fr">Publication</span></h4><p><span class="lang-en">Auto-published, always with a human confirming before live.</span><span class="lang-fr">Publié automatiquement, toujours avec un humain qui confirme avant la mise en ligne.</span></p></div>
+    </div>
+
+    <div class="callout card reveal" style="margin-top:26px">
+      <div class="ctag"><span class="lang-en">How quality feeds back</span><span class="lang-fr">Comment la qualité revient en amont</span></div>
+      <h3><span class="lang-en">Every correction makes the engine smarter</span><span class="lang-fr">Chaque correction rend le moteur plus intelligent</span></h3>
+      <div class="prose"><span class="lang-en">The loop that matters isn't fixing a string — it's catching the <b>class</b> of error and folding it back into the system's rules, so the AI stops reproducing it. One correction, applied to a whole pattern, across every market. That's why cost keeps falling: the stronger the rules, the less human review each batch needs.</span><span class="lang-fr">La boucle qui compte n'est pas de corriger une chaîne — c'est d'attraper la <b>classe</b> d'erreur et de la réinjecter dans les règles du système, pour que l'IA cesse de la reproduire. Une correction, appliquée à tout un motif, sur chaque marché. C'est pourquoi le coût continue de baisser : plus les règles sont fortes, moins chaque lot demande de relecture humaine.</span></div>
+      <div class="steps">
+        <div class="cs"><div class="csn">1</div><div class="cst"><span class="lang-en">Reviewer flags an error in context</span><span class="lang-fr">Le relecteur signale une erreur en contexte</span></div></div>
+        <div class="cs"><div class="csn">2</div><div class="cst"><span class="lang-en">Find the underlying pattern, not the one string</span><span class="lang-fr">Trouver le motif sous-jacent, pas la seule chaîne</span></div></div>
+        <div class="cs"><div class="csn">3</div><div class="cst"><span class="lang-en">Encode it as a rule or a hard gate</span><span class="lang-fr">L'encoder en règle ou garde-fou strict</span></div></div>
+        <div class="cs"><div class="csn">4</div><div class="cst"><span class="lang-en">The whole class of error stops, everywhere</span><span class="lang-fr">Toute la classe d'erreur s'arrête, partout</span></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 3. THE EXPANSION ===== -->
+<section id="expansion">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">Same engine, harder problem</span><span class="lang-fr">Même moteur, problème plus dur</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">Opening ~20 new markets with AI</span><span class="lang-fr">Ouvrir ~20 nouveaux marchés avec l'IA</span></h2><span class="rule"></span><span class="idx">03</span></div>
+    <p class="lead reveal"><span class="lang-en">Launching in new countries means every product string has to exist — and stay correct as English keeps changing — in languages I don't speak. I designed three families of automation to do it, each solving a different version of the same problem.</span><span class="lang-fr">Ouvrir de nouveaux pays, c'est faire exister chaque chaîne produit — et la garder juste pendant que l'anglais évolue — dans des langues que je ne parle pas. J'ai conçu trois familles d'automatisation pour ça, chacune résolvant une variante du même problème.</span></p>
+
+    <div class="maprow reveal">
+      <div>
+        <div class="card padcard">
+          <div class="ek" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:12px"><span class="lang-en">The markets</span><span class="lang-fr">Les marchés</span></div>
+          <div class="muted" style="margin-bottom:6px"><span class="lang-en">New languages — translated fresh, nightly</span><span class="lang-fr">Nouvelles langues — traduites à neuf, chaque nuit</span></div>
+          <div class="locgrid">
+            <span class="loc fresh">Thai</span><span class="loc fresh">Greek</span><span class="loc fresh">Vietnamese</span><span class="loc fresh">Indonesian</span><span class="loc fresh">Malay</span><span class="loc fresh">Bulgarian</span><span class="loc fresh">Macedonian</span><span class="loc fresh">Bosnian</span><span class="loc fresh">Albanian</span>
+          </div>
+          <div class="muted" style="margin:14px 0 6px"><span class="lang-en">Adapted from a close cousin we already do well</span><span class="lang-fr">Adaptées depuis une cousine déjà bien maîtrisée</span></div>
+          <div class="locgrid">
+            <span class="loc adapt">LATAM Spanish</span><span class="loc adapt">Moroccan French</span><span class="loc adapt">Moldovan</span><span class="loc adapt">Philippine English</span>
+          </div>
+          <div class="muted" style="margin:14px 0 6px"><span class="lang-en">Special pipelines</span><span class="lang-fr">Pipelines dédiés</span></div>
+          <div class="locgrid">
+            <span class="loc special">Argentina</span><span class="loc special">Chile</span>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="famcard">
+          <div class="fh"><h4><span class="lang-en">Continuous translators</span><span class="lang-fr">Traducteurs continus</span></h4><span class="ct"><span class="lang-en">9 locales · nightly</span><span class="lang-fr">9 locales · nuit</span></span></div>
+          <p><span class="lang-en">Translate a genuinely new language from English and keep it in sync forever. One per locale, running every night.</span><span class="lang-fr">Traduisent une langue vraiment nouvelle depuis l'anglais et la maintiennent synchrone pour toujours. Un par locale, chaque nuit.</span></p>
+        </div>
+        <div class="famcard">
+          <div class="fh"><h4><span class="lang-en">Adaptors</span><span class="lang-fr">Adaptateurs</span></h4><span class="ct"><span class="lang-en">reuse + edit</span><span class="lang-fr">réutiliser + éditer</span></span></div>
+          <p><span class="lang-en">Instead of re-translating, reuse a language we already have well and make minimal per-country edits. Cheaper, faster, consistent.</span><span class="lang-fr">Au lieu de re-traduire, réutiliser une langue déjà bien faite et appliquer des éditions minimes par pays. Moins cher, plus rapide, cohérent.</span></p>
+        </div>
+        <div class="famcard">
+          <div class="fh"><h4><span class="lang-en">Regional rewriters</span><span class="lang-fr">Ré-écrivains régionaux</span></h4><span class="ct"><span class="lang-en">2 locales · nightly</span><span class="lang-fr">2 locales · nuit</span></span></div>
+          <p><span class="lang-en">Argentina &amp; Chile: a dedicated pipeline that takes regional Spanish and rewrites it where it doesn't sound local. Everything writes back unverified — a human always confirms before it goes live.</span><span class="lang-fr">Argentine &amp; Chili : un pipeline dédié qui prend l'espagnol régional et le réécrit là où ça ne sonne pas local. Tout revient non vérifié — un humain confirme toujours avant la mise en ligne.</span></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="callout card reveal" style="margin-top:24px">
+      <div class="ctag"><span class="lang-en">Reviewing a language you don't speak</span><span class="lang-fr">Relire une langue qu'on ne parle pas</span></div>
+      <h3><span class="lang-en">A review pipeline that sees the screen, not just the string</span><span class="lang-fr">Un pipeline de relecture qui voit l'écran, pas seulement la chaîne</span></h3>
+      <div class="prose"><span class="lang-en">The hardest part isn't translating — it's reviewing. I built a pipeline that turns QA test recordings into a clean gallery of real app screens, deduplicated down to the flows that matter, so a native reviewer checks each string <b>where it actually lives</b>. Their corrections don't just fix strings — the systemic ones get folded back into the engine's rules. And before spending a single review hour, I audit the scope against live data and cut everything out of scope — so the budget goes only to content people will actually see.</span><span class="lang-fr">Le plus dur n'est pas de traduire — c'est de relire. J'ai construit un pipeline qui transforme les enregistrements de tests QA en une galerie propre d'écrans réels, dédupliquée jusqu'aux parcours qui comptent, pour qu'un relecteur natif vérifie chaque chaîne <b>là où elle vit vraiment</b>. Leurs corrections ne corrigent pas que des chaînes — les corrections systémiques reviennent dans les règles du moteur. Et avant de dépenser une seule heure de relecture, j'audite le périmètre face aux données réelles et je coupe le hors-périmètre — pour que le budget aille seulement au contenu réellement vu.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 4. AI ENABLEMENT ===== -->
+<section id="enablement">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">Beyond my own role</span><span class="lang-fr">Au-delà de mon rôle</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">Making a company better at AI</span><span class="lang-fr">Rendre une entreprise meilleure en IA</span></h2><span class="rule"></span><span class="idx">04</span></div>
+    <p class="lead reveal"><span class="lang-en">Building systems for myself is half of it. The other half is helping everyone else build theirs — through training, through tools they can own, and through the thinking that decides where AI fits in the first place.</span><span class="lang-fr">Construire des systèmes pour moi n'est que la moitié. L'autre moitié, c'est aider tous les autres à construire les leurs — par la formation, par des outils qu'ils possèdent, et par la réflexion qui décide où l'IA a sa place.</span></p>
+
+    <div class="engrid reveal">
+      <div class="encard card full">
+        <div class="ek"><span class="lang-en">The framework I shared publicly</span><span class="lang-fr">Le cadre que j'ai partagé publiquement</span></div>
+        <h3><span class="lang-en">Floor vs ceiling: where each AI tool belongs</span><span class="lang-fr">Socle vs plafond : où chaque outil IA a sa place</span></h3>
+        <p><span class="lang-en">The simplest lens I've found for AI tooling decisions, and the one I presented at AI Product Day. A <b>floor</b> tool is the universal, sanctioned baseline everyone gets. A <b>ceiling</b> tool is a high-leverage layer for advanced users with concrete, measurable use cases. Most "should we buy this?" arguments dissolve once you ask: is this competing with the floor, or extending the ceiling? Floor competes head-on and rarely wins; ceiling complements and can pass. It defuses turf wars and turns an all-or-nothing fight into a tractable question.</span><span class="lang-fr">Le prisme le plus simple que j'ai trouvé pour les décisions d'outillage IA, et celui que j'ai présenté à l'AI Product Day. Un outil <b>socle</b> est la base universelle et validée que tout le monde a. Un outil <b>plafond</b> est une couche à fort levier pour utilisateurs avancés avec des cas d'usage concrets et mesurables. La plupart des débats « on l'achète ? » se dissolvent dès qu'on demande : ça concurrence le socle, ou ça étend le plafond ? Le socle s'affronte de face et gagne rarement ; le plafond complète et peut passer. Ça désamorce les guerres de territoire et transforme un combat tout-ou-rien en question abordable.</span></p>
+      </div>
+
+      <div class="encard card">
+        <div class="ek"><span class="lang-en">Training</span><span class="lang-fr">Formation</span></div>
+        <h3><span class="lang-en">Company-wide AI trainings</span><span class="lang-fr">Formations IA à l'échelle</span></h3>
+        <p><span class="lang-en">Delivered hands-on AI trainings averaging 4.7/5, built production assistants used across Product, Growth, CRM and Research, and helped structure the company's AI knowledge base. The recurring move: don't centralize the AI work — teach people to do it themselves.</span><span class="lang-fr">Des formations IA en pratique, note moyenne 4,7/5, des assistants en production utilisés par Product, Growth, CRM et Research, et la structuration de la base de connaissances IA de l'entreprise. Le geste récurrent : ne pas centraliser le travail IA — apprendre aux gens à le faire eux-mêmes.</span></p>
+      </div>
+
+      <div class="encard card">
+        <div class="ek"><span class="lang-en">Governance</span><span class="lang-fr">Gouvernance</span></div>
+        <h3><span class="lang-en">Guild champion &amp; cost discipline</span><span class="lang-fr">Champion de la Guilde &amp; discipline des coûts</span></h3>
+        <p><span class="lang-en">Co-lead of the AI Product Chapter and a GenAI Guild champion. I put one argument on the record early: AI run-rate is now a real budget line, not a free buffet. I pushed for burn-rate and efficiency to become explicit, measured goals — outcomes, not just activity counts.</span><span class="lang-fr">Co-lead du Chapter Produit IA et champion de la Guilde GenAI. J'ai posé un argument tôt : la consommation IA est désormais une vraie ligne budgétaire, pas un buffet gratuit. J'ai poussé pour que le taux de consommation et l'efficience deviennent des objectifs explicites et mesurés — des résultats, pas que des compteurs d'activité.</span></p>
+      </div>
+
+      <div class="encard card">
+        <div class="ek"><span class="lang-en">Vendor selection</span><span class="lang-fr">Choix des outils</span></div>
+        <h3><span class="lang-en">Pragmatic tool evaluation</span><span class="lang-fr">Évaluation pragmatique des outils</span></h3>
+        <p><span class="lang-en">I run AI tool evaluations against one consistent question — is this floor or ceiling, and where does it actually fit our stack? — rather than chasing features. The output leaders can act on: a clear recommendation on where to adopt, where to wait, and what it really costs.</span><span class="lang-fr">J'évalue les outils IA selon une seule question constante — socle ou plafond, et où ça s'insère vraiment dans notre stack ? — plutôt que de courir après les fonctionnalités. Le livrable que les dirigeants peuvent actionner : une recommandation claire sur où adopter, où attendre, et ce que ça coûte réellement.</span></p>
+      </div>
+
+      <div class="encard card">
+        <div class="ek"><span class="lang-en">Visibility</span><span class="lang-fr">Visibilité</span></div>
+        <h3><span class="lang-en">External &amp; internal recognition</span><span class="lang-fr">Reconnaissance externe &amp; interne</span></h3>
+        <p><span class="lang-en">Speaker at AI Product Day 2025 in Paris (alongside the company's VP Data), featured by Les Echos and Talan as a case study in pragmatic AI adoption, and author of the company's first external GenAI article.</span><span class="lang-fr">Intervenant à l'AI Product Day 2025 à Paris (aux côtés du VP Data de l'entreprise), cité par Les Echos et Talan comme cas d'école d'adoption pragmatique de l'IA, et auteur du premier article GenAI externe de l'entreprise.</span></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 5. CAREER COMPOUNDING ===== -->
+<section id="compounding">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">How I think about my own work</span><span class="lang-fr">Comment je pense mon propre travail</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">The compounding lens</span><span class="lang-fr">Le prisme du levier composé</span></h2><span class="rule"></span><span class="idx">05</span></div>
+    <p class="lead reveal"><span class="lang-en">I rate my own tasks the way the Morning Compass does — not by urgency, but by whether they <i>compound</i>. It's a simple discipline that keeps a builder from disappearing into the run. Read the mix over a week and you can see whether the position is moving or just holding.</span><span class="lang-fr">Je note mes propres tâches comme le fait la Boussole du matin — pas par urgence, mais selon qu'elles <i>capitalisent</i>. Une discipline simple qui empêche un bâtisseur de se dissoudre dans le run. Lisez le mélange sur une semaine et vous voyez si la position avance ou se contente de tenir.</span></p>
+
+    <div class="levwrap reveal">
+      <div class="levkey card">
+        <div class="lk"><span class="m plus">+</span><div class="d"><b><span class="lang-en">Compounds</span><span class="lang-fr">Capitalise</span></b><span><span class="lang-en">Builds a system, tool or asset that keeps paying after I stop touching it — or buys scope, influence, or evidence for the next role.</span><span class="lang-fr">Construit un système, un outil ou un asset qui continue de rapporter après que j'arrête d'y toucher — ou gagne du scope, de l'influence, ou des preuves pour le prochain rôle.</span></span></div></div>
+        <div class="lk"><span class="m eq">=</span><div class="d"><b><span class="lang-en">Holds position</span><span class="lang-fr">Tient la position</span></b><span><span class="lang-en">Necessary run-work that keeps the function healthy but doesn't build past it. Most of any job — and that's fine.</span><span class="lang-fr">Du run nécessaire qui maintient la fonction saine sans la dépasser. L'essentiel de tout métier — et c'est très bien.</span></span></div></div>
+        <div class="lk"><span class="m minus">−</span><div class="d"><b><span class="lang-en">Resets to zero</span><span class="lang-fr">Remet à zéro</span></b><span><span class="lang-en">Necessary toil I'd hand off tomorrow. The mark is a flag, not a verdict: delegate, automate, or batch it — and don't let it eat a morning.</span><span class="lang-fr">Corvée nécessaire que je déléguerais demain. Le signe est une alerte, pas un verdict : déléguer, automatiser, ou grouper — et ne pas y perdre une matinée.</span></span></div></div>
+      </div>
+      <div class="levbar card">
+        <h4><span class="lang-en">Reading a week as trajectory</span><span class="lang-fr">Lire une semaine comme trajectoire</span></h4>
+        <div class="muted" style="margin-bottom:4px"><span class="lang-en">The mix matters more than any single task</span><span class="lang-fr">Le mélange compte plus que n'importe quelle tâche</span></div>
+        <div class="barwrap">
+          <div class="barlbl"><b><span class="lang-en">Healthy week</span><span class="lang-fr">Semaine saine</span></b><span><span class="lang-en">something compounded</span><span class="lang-fr">quelque chose a capitalisé</span></span></div>
+          <div class="bar"><div class="bp" style="width:45%"></div><div class="be" style="width:40%"></div><div class="bm" style="width:15%"></div></div>
+        </div>
+        <div class="barwrap">
+          <div class="barlbl"><b><span class="lang-en">All hold</span><span class="lang-fr">Tout tient</span></b><span><span class="lang-en">fine for a week, a worry for a quarter</span><span class="lang-fr">ok une semaine, inquiétant un trimestre</span></span></div>
+          <div class="bar"><div class="bp" style="width:8%"></div><div class="be" style="width:80%"></div><div class="bm" style="width:12%"></div></div>
+        </div>
+        <div class="barwrap">
+          <div class="barlbl"><b><span class="lang-en">Heavy toil</span><span class="lang-fr">Lourd en corvées</span></b><span><span class="lang-en">the run is eating you — automate or delegate</span><span class="lang-fr">le run te dévore — automatise ou délègue</span></span></div>
+          <div class="bar"><div class="bp" style="width:10%"></div><div class="be" style="width:35%"></div><div class="bm" style="width:55%"></div></div>
+        </div>
+        <div class="muted" style="margin-top:8px"><span class="lang-en">A <b>−</b> done in a way that builds a system to kill it later is really a <b>+</b> in disguise. You're not doing the toil — you're deleting it.</span><span class="lang-fr">Un <b>−</b> fait de façon à bâtir un système qui le tuera plus tard est en réalité un <b>+</b> déguisé. Tu ne fais pas la corvée — tu la supprimes.</span></div>
+      </div>
+    </div>
+
+    <div class="card padcard reveal" style="margin-top:18px">
+      <div class="prose"><span class="lang-en"><b>The pattern, if you read across everything above:</b> I take work that resets to zero — manual, repeated, fragile — and turn it into something that compounds. A pipeline instead of a per-word invoice. A gate instead of a reminder. A taught system instead of a task I own forever. The throughline isn't localization, and it isn't AI. It's converting toil into leverage, and then handing the leverage to someone else.</span><span class="lang-fr"><b>Le motif, si vous lisez à travers tout ce qui précède :</b> je prends du travail qui remet à zéro — manuel, répété, fragile — et le transforme en quelque chose qui capitalise. Un pipeline plutôt qu'une facture au mot. Un garde-fou plutôt qu'un rappel. Un système enseigné plutôt qu'une tâche que je possède pour toujours. Le fil rouge n'est ni la localisation, ni l'IA. C'est convertir la corvée en levier, puis transmettre le levier à quelqu'un d'autre.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 6. ABOUT ===== -->
+<section id="about">
+  <div class="wrap">
+    <div class="eyebrow reveal"><span class="lang-en">The person behind it</span><span class="lang-fr">La personne derrière</span></div>
+    <div class="zone-head reveal"><h2><span class="lang-en">About me</span><span class="lang-fr">À propos</span></h2><span class="rule"></span><span class="idx">06</span></div>
+
+    <div class="aboutgrid reveal">
+      <div class="card padcard">
+        <div class="prose"><span class="lang-en">I started in games — localization and QA at Blizzard, then NCSOFT — before moving to Pinterest in the Bay Area for international product ops, and then to BlaBlaCar in Paris, where I've spent eight years. The thread across all of it: I'm drawn to the messy, high-volume operational corner of a product, the part nobody wants to own, and I can't help rebuilding it into something that runs itself.<br><br>I think in first principles — decompose the problem before reaching for a tool. I'd rather build the realistic thing that ships than the idealized thing that doesn't. And I care more about a team running a system without me than about being the one holding the keys.</span><span class="lang-fr">J'ai commencé dans le jeu vidéo — localisation et QA chez Blizzard, puis NCSOFT — avant de rejoindre Pinterest dans la Bay Area pour des ops produit internationales, puis BlaBlaCar à Paris, où je suis depuis huit ans. Le fil rouge : je suis attiré par le coin opérationnel chaotique et à fort volume d'un produit, celui que personne ne veut, et je ne peux m'empêcher de le reconstruire en quelque chose qui tourne seul.<br><br>Je pense en premiers principes — décomposer le problème avant de saisir un outil. Je préfère construire la chose réaliste qui sort à la chose idéale qui ne sort jamais. Et je tiens plus à une équipe qui fait tourner un système sans moi qu'à être celui qui garde les clés.</span></div>
+
+        <div style="margin-top:18px">
+          <div class="ek" style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);font-weight:700;margin-bottom:4px"><span class="lang-en">Off the clock</span><span class="lang-fr">En dehors du travail</span></div>
+          <div class="intlist">
+            <span class="int"><span class="lang-en">Japanese culture</span><span class="lang-fr">Culture japonaise</span></span>
+            <span class="int">Taoism</span>
+            <span class="int">Kabbalah</span>
+            <span class="int"><span class="lang-en">Film</span><span class="lang-fr">Cinéma</span></span>
+            <span class="int">Art</span>
+            <span class="int"><span class="lang-en">Music</span><span class="lang-fr">Musique</span></span>
+            <span class="int">StarCraft II</span>
+            <span class="int">Light Qigong</span>
+            <span class="int"><span class="lang-en">Writing on Medium</span><span class="lang-fr">Écriture sur Medium</span></span>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="minifact card">
+          <div class="mf"><span class="l"><span class="lang-en">Based in</span><span class="lang-fr">Basé à</span></span><span class="v">Paris</span></div>
+          <div class="mf"><span class="l"><span class="lang-en">Languages</span><span class="lang-fr">Langues</span></span><span class="v"><span class="lang-en">FR / EN native · JP basic</span><span class="lang-fr">FR / EN natif · JP notions</span></span></div>
+          <div class="mf"><span class="l"><span class="lang-en">Previously</span><span class="lang-fr">Avant</span></span><span class="v">Pinterest · Blizzard</span></div>
+          <div class="mf"><span class="l"><span class="lang-en">Builds with</span><span class="lang-fr">Construit avec</span></span><span class="v">LLMs · automation · scripts</span></div>
+          <div class="mf"><span class="l"><span class="lang-en">Writes in</span><span class="lang-fr">Écrit en</span></span><span class="v">FR + EN</span></div>
+        </div>
+        <a class="btn primary" href="https://www.linkedin.com/in/simonrimbert-61028530" target="_blank" rel="noopener" style="width:100%;justify-content:center;margin-top:14px">
+          <span class="lang-en">Connect on LinkedIn</span><span class="lang-fr">Me contacter sur LinkedIn</span> ↗
+        </a>
+        <div class="muted center" style="margin-top:12px"><span class="lang-en">Open to conversations about AI-first operations, enablement, and product roles.</span><span class="lang-fr">Ouvert aux échanges sur les opérations AI-first, l'enablement, et les rôles produit.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div>
+      <span class="lang-en">Simon Rimbert · AI-First Operations · Paris</span>
+      <span class="lang-fr">Simon Rimbert · Opérations AI-First · Paris</span>
+    </div>
+    <div>
+      <a href="https://www.linkedin.com/in/simonrimbert-61028530" target="_blank" rel="noopener">LinkedIn</a> ·
+      <a href="#top"><span class="lang-en">Back to top ↑</span><span class="lang-fr">Haut de page ↑</span></a>
+    </div>
+  </div>
+</footer>
+
+<script>
+/* ---------- theme ---------- */
+function setTheme(t){document.body.setAttribute('data-theme',t);}
+/* ---------- language ---------- */
+function toggleLang(){
+  const fr=document.body.classList.toggle('fr');
+  document.documentElement.lang=fr?'fr':'en';
+  document.getElementById('lang-en-lbl').className=fr?'':'on';
+  document.getElementById('lang-fr-lbl').className=fr?'on':'';
+}
+/* ---------- count-up ---------- */
+function runCounters(el){
+  el.querySelectorAll('[data-count]').forEach(n=>{
+    if(n.dataset.done)return;n.dataset.done=1;
+    const target=+n.dataset.count,suf=n.dataset.suffix||'';const dur=1100;const t0=performance.now();
+    function step(t){const p=Math.min((t-t0)/dur,1);const e=1-Math.pow(1-p,3);
+      n.innerHTML=Math.round(target*e).toLocaleString()+'<span class="u">'+suf+'</span>';
+      if(p<1)requestAnimationFrame(step);}
+    requestAnimationFrame(step);
+  });
+}
+/* ---------- reveal ---------- */
+const io=new IntersectionObserver((es)=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');runCounters(e.target);io.unobserve(e.target);}});},{threshold:.14});
+function observeReveals(){document.querySelectorAll('.reveal:not(.in)').forEach(el=>io.observe(el));}
+observeReveals();
+</script>
+</body>
+</html>

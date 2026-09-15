@@ -1,0 +1,30 @@
+Warmer 1.0 map datasets (local release candidate, prepared 9 September 2026)
+
+paris_streets.geojson: © OpenStreetMap contributors.
+Source: https://www.openstreetmap.org/copyright
+Licence: Open Database License (ODbL) 1.0.
+https://opendatacommons.org/licenses/odbl/1-0/
+
+This is the exact processed street dataset bundled with Warmer: 18,048 named
+street segments, represented as GeoJSON LineStrings with application segment IDs,
+names, highway classes and lengths. IDs are Warmer IDs, not original OSM way IDs.
+The original extraction date, query and processing script were not retained in
+the inspected project records. No new extraction or claim of current OSM completeness
+is made. Decisions 003–004 document OSM provenance and named-street filtering.
+The full processed dataset is supplied rather than an unreproducible transformation.
+
+paris_arrondissements.json and paris_boundary.json: © Ville de Paris,
+Direction de l’Urbanisme. Source dataset: Arrondissements.
+https://opendata.paris.fr/explore/dataset/arrondissements/
+Licence: Open Database License (ODbL) 1.0 (same URL above).
+The 20 arrondissement rings match the source coordinates rounded to six decimal
+places, verified on 9 September 2026. Warmer retains district number/name/ring.
+The city boundary is the outer union ring of these districts. The original
+acquisition date is not known; 9 September 2026 is the verification date.
+
+These three adapted databases are made available under ODbL 1.0. The licence text
+is included in ODbL-1.0.txt. There is no personal walking history, saved pin,
+application code, Apple basemap, or excluded Discovery dataset in this package.
+The licence applies to the map databases, not to personal records or app code.
+See SHA256SUMS.txt for the exact files. Redistribution must retain source/licence
+notices and respect the accompanying licence.

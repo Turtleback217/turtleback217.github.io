@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Compass</title>
+<style>
+  :root{color-scheme:light;
+    --paper:#eef1fa;--paper2:#f7f8fe;--card:#fbfcff;
+    --ink:#001f7b;--ink-soft:#33417e;--ink-faint:#8089b4;
+    --accent:#001f7b;--accent-soft:#6c79c2;--accent-bg:#fff2cf;
+    --second:#b07f08;--second-bg:#fff4d4;--gold:#cf9400;
+    --line:#d6dbef;--line-soft:#e7eafa;
+    --danger:#ab1509;--danger-bg:#fbe6df;
+    --shadow:0 2px 10px rgba(60,50,30,.10),0 1px 2px rgba(60,50,30,.06);
+    --radius:18px;--radius-sm:12px;
+  }
+  body[data-theme="sage"]{--paper:#eef3ea;--paper2:#f7faf4;--card:#fbfdf9;--ink:#1a2517;--ink-soft:#46553f;--ink-faint:#8a9882;--accent:#3f5a32;--accent-soft:#7d9a6c;--accent-bg:#e2ecdb;--second:#6d7d57;--second-bg:#e9f0e2;--gold:#7e8c4a;--line:#d8e2cf;--line-soft:#e6eede;--danger:#9b2519;--danger-bg:#f8e2dc}
+  body[data-theme="royal"]{--paper:#eef3f9;--paper2:#f4feff;--card:#f9fcff;--ink:#001a4d;--ink-soft:#3a4d72;--ink-faint:#8090ad;--accent:#0e2f76;--accent-soft:#7e94c2;--accent-bg:#dde6f3;--second:#04326d;--second-bg:#e2e9f4;--gold:#5a6f9e;--line:#cfdaea;--line-soft:#e0e8f3;--danger:#9b2519;--danger-bg:#f8e2dc}
+  body[data-theme="bluegold"]{--paper:#eef1fa;--paper2:#f7f8fe;--card:#fbfcff;--ink:#001f7b;--ink-soft:#33417e;--ink-faint:#8089b4;--accent:#001f7b;--accent-soft:#6c79c2;--accent-bg:#fff2cf;--second:#b07f08;--second-bg:#fff4d4;--gold:#cf9400;--line:#d6dbef;--line-soft:#e7eafa;--danger:#ab1509;--danger-bg:#fbe6df}
+  body[data-theme="lavender"]{--paper:#f1effc;--paper2:#faf9ff;--card:#fff;--ink:#2e2860;--ink-soft:#5b5392;--ink-faint:#9b94c4;--accent:#796bd8;--accent-soft:#b0a7ea;--accent-bg:#ece9fb;--second:#6a5fc0;--second-bg:#efedfb;--gold:#8a7fd0;--line:#ddd8f3;--line-soft:#ebe8fa;--danger:#9b2519;--danger-bg:#f8e2dc}
+  body[data-theme="redsoft"]{--paper:#fdf8e3;--paper2:#fffbef;--card:#fffdf6;--ink:#5a1008;--ink-soft:#8a3327;--ink-faint:#b08a7a;--accent:#ab1509;--accent-soft:#d4796e;--accent-bg:#fbe6df;--second:#9a5a12;--second-bg:#fdf1d2;--gold:#bf7a16;--line:#ecdcc0;--line-soft:#f4ead0;--danger:#8d1309;--danger-bg:#f9ddd4}
+  body[data-theme="redbright"]{--paper:#fdf3ee;--paper2:#fffaf6;--card:#fffcf9;--ink:#5c1206;--ink-soft:#8a2f1f;--ink-faint:#c08a78;--accent:#e0341c;--accent-soft:#f08e7c;--accent-bg:#fbe0d7;--second:#c85a12;--second-bg:#fde7d5;--gold:#d9741a;--line:#f0d3c4;--line-soft:#f8e5da;--danger:#b8200d;--danger-bg:#f9ddd4}
+
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{
+    min-height:100vh;padding:22px 18px 56px;color:var(--ink);
+    font-family:ui-rounded,"SF Pro Rounded",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    line-height:1.5;background:radial-gradient(120% 90% at 15% -5%,rgba(255,255,255,.6),transparent 55%),var(--paper);
+    transition:background .35s,color .35s;
+  }
+  button,select{font:inherit}
+  .wrap{max-width:980px;margin:0 auto}
+  .topbar{display:flex;justify-content:flex-end;margin-bottom:7px}
+  .theme-pick{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--ink-faint);letter-spacing:.04em}
+  .theme-pick select{font-size:11.5px;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:999px;padding:5px 12px;cursor:pointer;box-shadow:var(--shadow)}
+  .theme-pick select:hover{border-color:var(--accent-soft)}
+  .swatch{width:12px;height:12px;border-radius:50%;background:var(--accent);border:1px solid var(--line)}
+
+  .epigraph{text-align:center;margin:0 auto 10px;max-width:650px}
+  .epigraph .q{font-size:13.5px;font-style:italic;color:var(--ink-soft);line-height:1.55}
+  .epigraph .q::before{content:"\201C";color:var(--gold);margin-right:2px}
+  .epigraph .q::after{content:"\201D";color:var(--gold);margin-left:2px}
+  .epigraph .a{font-size:9.5px;letter-spacing:.17em;text-transform:uppercase;color:var(--ink-faint);margin-top:3px}
+  .masthead{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;padding:0 5px 12px;border-bottom:1px solid var(--line);margin-bottom:14px}
+  .almanac{font-size:12px;letter-spacing:.25em;color:var(--gold);text-transform:uppercase}
+  .almanac b{color:var(--ink-soft);font-weight:650}
+  .date{font-size:11.5px;letter-spacing:.11em;color:var(--ink-soft);text-align:right}
+  .stage{display:inline-block;margin-left:7px;padding:1px 7px;border-radius:999px;background:var(--second-bg);color:var(--second);font-size:9px;font-weight:750;letter-spacing:.09em;vertical-align:1px}
+  .warn-strip{background:var(--danger-bg);border:1px solid var(--accent-soft);border-left:4px solid var(--danger);border-radius:var(--radius-sm);padding:10px 16px;margin-bottom:12px;font-size:12px;color:var(--danger);box-shadow:var(--shadow)}
+  .warn-strip b{text-transform:uppercase;letter-spacing:.06em;font-size:10px;margin-right:7px}
+
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);box-shadow:var(--shadow);transition:background .35s,border-color .35s}
+  .north{position:relative;padding:15px 18px 13px;border-left:4px solid var(--gold);margin-bottom:14px;overflow:hidden}
+  .north::after{content:"";position:absolute;right:-30px;top:-55px;width:145px;height:145px;border:1px solid var(--line);border-radius:50%;opacity:.55}
+  .north-top{display:flex;align-items:center;gap:9px;margin-bottom:4px;position:relative;z-index:1}
+  .eyebrow{font-size:10px;font-weight:750;letter-spacing:.18em;text-transform:uppercase;color:var(--gold)}
+  .state-chip{font-size:9px;letter-spacing:.07em;padding:1px 7px;border:1px solid var(--line);border-radius:999px;color:var(--ink-faint);background:var(--paper2)}
+  .north p{font-size:16px;line-height:1.38;font-weight:700;max-width:790px;position:relative;z-index:1}
+  .tradeoff{font-size:11px;color:var(--ink-faint);margin-top:5px;position:relative;z-index:1}
+  .tradeoff b{color:var(--second)}
+
+  .section-head{display:flex;align-items:center;gap:10px;margin:0 4px 8px}
+  .section-head .title{font-size:11px;font-weight:750;letter-spacing:.19em;text-transform:uppercase;color:var(--accent)}
+  .section-head.gold .title{color:var(--gold)}
+  .section-head .rule{height:1px;background:var(--line);flex:1}
+  .section-head .note{font-size:10px;color:var(--ink-faint);letter-spacing:.05em}
+  .priority-list{padding:3px 4px;margin-bottom:14px}
+  .task{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border-top:1px solid var(--line-soft);transition:background .15s,opacity .15s}
+  .task:first-child{border-top:0}
+  .task:hover{background:var(--paper2)}
+  .task.tickable{cursor:pointer}
+  .pip{flex:0 0 auto;width:15px;height:15px;border-radius:50%;margin-top:2px;border:2px solid var(--line);background:var(--paper2)}
+  .task.tickable:hover .pip{border-color:var(--accent)}
+  .pip.prog{border-color:var(--gold);background:radial-gradient(circle,var(--gold) 0 40%,transparent 42%)}
+  .pip.block{border-color:var(--accent-soft);background:var(--accent-bg)}
+  .pip.block::after{content:"!";display:block;text-align:center;color:var(--accent);font-size:9px;font-weight:800;line-height:11px}
+  .task.done{opacity:.48}
+  .task.done .t-main{text-decoration:line-through;color:var(--ink-faint)}
+  .task.done .pip{border-color:var(--second);background:var(--second)}
+  .task.done .pip::after{content:"\2713";display:block;text-align:center;color:var(--paper2);font-size:9px;font-weight:800;line-height:11px}
+  .rank{flex:0 0 auto;width:18px;height:18px;border-radius:6px;background:var(--accent);color:var(--paper2);font-size:10px;font-weight:800;text-align:center;line-height:18px;margin-top:1px}
+  .t-body{flex:1;min-width:0}
+  .t-main{font-size:12.5px;color:var(--ink);font-weight:650;line-height:1.35}
+  .t-meta{font-size:10.5px;color:var(--ink-faint);margin-top:3px;display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+  .chip{font-size:9.5px;letter-spacing:.035em;padding:1px 7px;border-radius:999px;background:var(--second-bg);color:var(--second);font-weight:650;white-space:nowrap}
+  .chip.due{background:var(--accent-bg);color:var(--accent)}
+  .chip.overdue{background:var(--accent);color:var(--paper2)}
+  .chip.why{background:var(--line-soft);color:var(--ink-soft)}
+  .chip.wait{background:var(--accent-bg);color:var(--gold)}
+  .chip.stretch{background:var(--second-bg);color:var(--gold)}
+
+  .okrs{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;align-items:start}
+  .okr{overflow:hidden;border-top:3px solid var(--gold)}
+  .okr>summary{list-style:none;cursor:pointer;padding:10px 28px 9px 12px;position:relative}
+  .okr>summary::-webkit-details-marker{display:none}
+  .okr>summary::after{content:"+";position:absolute;right:12px;top:9px;color:var(--accent-soft);font-size:14px;font-weight:500}
+  .okr[open]>summary::after{content:"\2212"}
+  .okr>summary:hover{background:var(--paper2)}
+  .okr-title{display:flex;align-items:center;gap:7px;font-size:11.5px;font-weight:750;color:var(--accent);line-height:1.3}
+  .okr-num{display:inline-block;font-size:9px;font-weight:800;color:var(--gold);border:1.5px solid var(--gold);border-radius:6px;padding:0 5px;letter-spacing:.07em}
+  .pulse{display:flex;align-items:center;gap:4px;margin-left:auto}
+  .pulse .pip{width:10px;height:10px;border-width:1.5px;margin:0}
+  .okr-next{font-size:9.8px;color:var(--ink-faint);margin-top:6px;line-height:1.4}
+  .okr-next b{color:var(--second);font-weight:700}
+  .okr-body{border-top:1px solid var(--line-soft);padding:2px 12px 8px}
+  .kr{display:flex;align-items:flex-start;gap:7px;padding:7px 0;border-top:1px solid var(--line-soft)}
+  .kr:first-child{border-top:0}
+  .kr .pip{width:11px;height:11px;border-width:1.5px;margin-top:3px}
+  .kr .pip.done{border-color:var(--second);background:var(--second)}
+  .kr .pip.risk{border-color:var(--danger);background:var(--danger-bg)}
+  .kr-text{font-size:10.5px;color:var(--ink-soft);line-height:1.4}
+  .kr-text b{display:block;color:var(--ink);font-size:10.5px;margin-bottom:1px}
+
+  .mid-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;align-items:start}
+  .lane{padding:3px 4px}
+  .lane .task{padding:8px 12px}
+  .lane-label{padding:9px 13px 5px;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:700}
+  .move-type{width:16px;height:16px;border-radius:5px;border:1px solid var(--gold);color:var(--gold);font-size:9px;font-weight:800;text-align:center;line-height:14px;margin-top:1px;flex:0 0 auto}
+
+  .tracked{margin-top:2px;overflow:hidden}
+  .tracked>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 15px}
+  .tracked>summary::-webkit-details-marker{display:none}
+  .tracked>summary::before{content:"\25b8";color:var(--accent-soft);font-size:10px;transition:transform .15s}
+  .tracked[open]>summary::before{transform:rotate(90deg)}
+  .tracked>summary:hover{background:var(--paper2)}
+  .tracked-title{font-size:11px;font-weight:750;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+  .tracked-summary{margin-left:auto;font-size:10px;color:var(--ink-faint);letter-spacing:.05em}
+  .tracked-body{border-top:1px solid var(--line);padding:7px}
+  .project{border:1px solid var(--line-soft);border-radius:var(--radius-sm);margin:6px;overflow:hidden;background:var(--card)}
+  .project>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:9px 11px}
+  .project>summary::-webkit-details-marker{display:none}
+  .project>summary::before{content:"\25b8";color:var(--accent-soft);font-size:9px;transition:transform .15s}
+  .project[open]>summary::before{transform:rotate(90deg)}
+  .project>summary:hover{background:var(--paper2)}
+  .project-name{font-size:11.5px;font-weight:700;color:var(--accent)}
+  .project-count{margin-left:auto;font-size:9.5px;color:var(--ink-faint)}
+  .project .task{padding:8px 12px}
+
+  .reconcile{display:flex;align-items:center;justify-content:center;gap:7px;flex-wrap:wrap;margin-top:11px;padding:8px 12px;border:1px solid var(--line);border-radius:999px;background:rgba(255,255,255,.28);font-size:9.8px;letter-spacing:.045em;color:var(--ink-faint)}
+  .reconcile b{color:var(--ink-soft)}
+  .reconcile .ok{color:var(--second);font-weight:750}
+  .reconcile .bad{color:var(--danger);font-weight:800}
+  .dot{color:var(--line)}
+  footer{margin-top:22px;text-align:center;font-size:10.5px;color:var(--ink-faint);letter-spacing:.04em;line-height:1.8;border-top:1px solid var(--line);padding-top:15px}
+  .seal{display:inline-block;margin-top:8px;width:34px;height:34px;border:2px solid var(--accent);color:var(--accent);font-size:14px;font-weight:700;line-height:30px;border-radius:10px;opacity:.85}
+
+  @media(max-width:760px){
+    body{padding:16px 12px 44px}
+    .masthead{align-items:flex-start;flex-direction:column;gap:4px}
+    .date{text-align:left}
+    .okrs,.mid-grid{grid-template-columns:1fr}
+    .north p{font-size:15px;padding-right:20px}
+  }
+</style>
+</head>
+<body data-theme="bluegold">
+<div class="wrap">
+  <div class="topbar">
+    <label class="theme-pick"><span class="swatch"></span>palette
+      <select id="theme-select" onchange="setTheme(this.value)">
+        <option value="bluegold">Deep Blue / Warm Yellow</option>
+        <option value="sage">Soft Sage / Deep Olive</option>
+        <option value="royal">Royal Blue suite</option>
+        <option value="lavender">Lavender / White</option>
+        <option value="redsoft">Deep Red / Soft Yellow</option>
+        <option value="redbright">Bright Red / Warm Orange</option>
+      </select>
+    </label>
+  </div>
+
+  <!-- BEGIN:backup-banner -->
+<div class="warn-strip"><b>Demonstration · fictional data</b> This is the real Compass interface with invented tasks and goals. It is not a current agenda.</div>
+<!-- END:backup-banner -->
+
+  <!-- BEGIN:quote -->
+<!-- The private daily quotation is omitted from this public demonstration. -->
+<!-- END:quote -->
+
+  <!-- BEGIN:masthead -->
+<header class="masthead" data-target-day="2026-01-01"><div class="almanac">Morning <b>Compass</b><span class="stage">Sample</span></div><div class="date">Fictional day · Thursday, 1 January 2026</div></header>
+<!-- END:masthead -->
+
+  <!-- BEGIN:north -->
+<section class="card north"><div class="north-top"><span class="eyebrow">Direction</span><span class="state-chip">Fictional example</span></div><p>Make a small reading tool easy to use before adding more features.</p><div class="tradeoff"><b>Keep the boundary:</b> improve one complete reading journey; leave the extra dashboard for another week.</div></section>
+<!-- END:north -->
+
+  <!-- BEGIN:today -->
+<div class="section-head"><span class="title">Today</span><span class="rule"></span><span class="note">Three ranked sample priorities</span></div><div class="card priority-list"><div class="task tickable" data-task="sample-reading-review" data-lane="today"><span class="rank">1</span><button type="button" class="pip prog" aria-label="Check off fictional task: Review the book-entry flow on a small screen"></button><div class="t-body"><div class="t-main">Review the book-entry flow on a small screen</div><div class="t-meta"><span>Reading tool</span><span class="chip why">Sample priority</span></div></div></div><div class="task tickable" data-task="sample-writing-outline" data-lane="today"><span class="rank">2</span><button type="button" class="pip" aria-label="Check off fictional task: Outline an essay about useful constraints"></button><div class="t-body"><div class="t-main">Outline an essay about useful constraints</div><div class="t-meta"><span>Writing</span><span class="chip why">Fictional task</span></div></div></div><div class="task tickable" data-task="sample-city-labels" data-lane="today"><span class="rank">3</span><button type="button" class="pip" aria-label="Check off fictional task: Make the city-map labels easier to read"></button><div class="t-body"><div class="t-main">Make the city-map labels easier to read</div><div class="t-meta"><span>City notebook</span><span class="chip why">Fictional task</span></div></div></div></div>
+<!-- END:today -->
+
+  <!-- BEGIN:okrs -->
+<div class="section-head"><span class="title">Goals</span><span class="rule"></span><span class="note">Fictional examples · expand for details</span></div><div class="okrs"><details class="card okr"><summary><div class="okr-title"><span class="okr-num">1</span>A useful reading tool<span class="pulse" aria-hidden="true"><span class="pip prog"></span><span class="pip"></span><span class="pip"></span></span></div><div class="okr-next"><b>Next:</b> Try the complete book-entry journey.</div></summary><div class="okr-body"><div class="kr"><span class="pip prog" aria-hidden="true"></span><div class="kr-text"><b>Capture</b>Add a book with only the fields needed to begin.</div></div><div class="kr"><span class="pip" aria-hidden="true"></span><div class="kr-text"><b>Return</b>Find the next book without searching through menus.</div></div><div class="kr"><span class="pip" aria-hidden="true"></span><div class="kr-text"><b>Keep</b>Make a copy of the sample library easy to export.</div></div></div></details><details class="card okr"><summary><div class="okr-title"><span class="okr-num">2</span>A thoughtful writing practice<span class="pulse" aria-hidden="true"><span class="pip done"></span><span class="pip prog"></span><span class="pip"></span></span></div><div class="okr-next"><b>Next:</b> Turn the outline into a first draft.</div></summary><div class="okr-body"><div class="kr"><span class="pip done" aria-hidden="true"></span><div class="kr-text"><b>Collect</b>Keep a small set of examples for the next essay.</div></div><div class="kr"><span class="pip prog" aria-hidden="true"></span><div class="kr-text"><b>Write</b>Develop one clear argument from those examples.</div></div><div class="kr"><span class="pip" aria-hidden="true"></span><div class="kr-text"><b>Edit</b>Remove the passages that repeat the same idea.</div></div></div></details><details class="card okr"><summary><div class="okr-title"><span class="okr-num">3</span>A clearer city notebook<span class="pulse" aria-hidden="true"><span class="pip prog"></span><span class="pip"></span><span class="pip"></span></span></div><div class="okr-next"><b>Next:</b> Check map labels at walking distance.</div></summary><div class="okr-body"><div class="kr"><span class="pip prog" aria-hidden="true"></span><div class="kr-text"><b>Orient</b>Make streets and saved places easy to tell apart.</div></div><div class="kr"><span class="pip" aria-hidden="true"></span><div class="kr-text"><b>Remember</b>Keep a short note with each saved place.</div></div><div class="kr"><span class="pip" aria-hidden="true"></span><div class="kr-text"><b>Simplify</b>Remove a control that interrupts the map.</div></div></div></details></div>
+<!-- END:okrs -->
+
+  <div class="mid-grid">
+    <div>
+      <!-- BEGIN:week -->
+<div class="section-head"><span class="title">This week</span><span class="rule"></span><span class="note">Three fictional directions</span></div><div class="card lane"><div class="task" data-lane="week"><span class="move-type">1</span><div class="t-body"><div class="t-main">Complete the smallest useful reading journey.</div><div class="t-meta"><span>Product</span><span class="chip why">Sample direction</span></div></div></div><div class="task" data-lane="week"><span class="move-type">2</span><div class="t-body"><div class="t-main">Keep reusable notes from each design review.</div><div class="t-meta"><span>System</span><span class="chip why">Sample direction</span></div></div></div><div class="task" data-lane="week"><span class="move-type">3</span><div class="t-body"><div class="t-main">Explain one design decision in a short essay.</div><div class="t-meta"><span>Writing</span><span class="chip why">Sample direction</span></div></div></div><div class="lane-label">Cap: no additional product ideas this sample week.</div></div>
+<!-- END:week -->
+    </div>
+
+    <div>
+      <!-- BEGIN:radar -->
+<div class="section-head"><span class="title">Radar</span><span class="rule"></span><span class="note">Upcoming sample actions</span></div><div class="card lane"><div class="task tickable" data-task="sample-reading-empty" data-lane="radar"><button type="button" class="pip" aria-label="Check off fictional task: Write a helpful empty-library message"></button><div class="t-body"><div class="t-main">Write a helpful empty-library message</div><div class="t-meta"><span>Reading tool</span><span class="chip why">Fictional task</span></div></div></div><div class="task tickable" data-task="sample-writing-edit" data-lane="radar"><button type="button" class="pip" aria-label="Check off fictional task: Read the essay draft aloud and shorten it"></button><div class="t-body"><div class="t-main">Read the essay draft aloud and shorten it</div><div class="t-meta"><span>Writing</span><span class="chip why">Fictional task</span></div></div></div><div class="task tickable" data-task="sample-city-contrast" data-lane="radar"><button type="button" class="pip" aria-label="Check off fictional task: Compare the map colors in bright light"></button><div class="t-body"><div class="t-main">Compare the map colors in bright light</div><div class="t-meta"><span>City notebook</span><span class="chip why">Fictional task</span></div></div></div></div>
+<!-- END:radar -->
+    </div>
+  </div>
+
+  <!-- BEGIN:tracked -->
+<details class="card tracked" data-summary-suffix="expand the sample ledger"><summary><span class="tracked-title">Tracked</span><span class="tracked-summary" id="tracked-summary">6 commitments · 3 projects · expand the sample ledger</span></summary><div class="tracked-body"><details class="project"><summary><span class="project-name">Reading tool</span><span class="project-count">2 sample items</span></summary><div class="task tickable" data-task="sample-reading-cover" data-lane="tracked"><button type="button" class="pip" aria-label="Check off fictional task: Check the fallback for a missing book cover"></button><div class="t-body"><div class="t-main">Check the fallback for a missing book cover</div><div class="t-meta"><span>Reading tool</span><span class="chip why">Fictional task</span></div></div></div><div class="task" data-task="sample-reading-feedback" data-lane="tracked"><span class="pip block" aria-hidden="true"></span><div class="t-body"><div class="t-main">Wait for feedback on the fictional prototype</div><div class="t-meta"><span>Reading tool</span><span class="chip wait">Waiting · fictional review</span></div></div></div></details><details class="project"><summary><span class="project-name">Writing</span><span class="project-count">2 sample items</span></summary><div class="task tickable" data-task="sample-writing-notes" data-lane="tracked"><button type="button" class="pip" aria-label="Check off fictional task: Sort the remaining example notes"></button><div class="t-body"><div class="t-main">Sort the remaining example notes</div><div class="t-meta"><span>Writing</span><span class="chip why">Fictional task</span></div></div></div><div class="task tickable" data-task="sample-writing-archive" data-lane="tracked"><button type="button" class="pip" aria-label="Check off fictional task: Organize the sample essay archive"></button><div class="t-body"><div class="t-main">Organize the sample essay archive</div><div class="t-meta"><span>Writing</span><span class="chip why">Fictional task</span></div></div></div></details><details class="project"><summary><span class="project-name">City notebook</span><span class="project-count">2 sample items</span></summary><div class="task tickable" data-task="sample-city-icons" data-lane="tracked"><button type="button" class="pip" aria-label="Check off fictional task: Compare two saved-place symbols"></button><div class="t-body"><div class="t-main">Compare two saved-place symbols</div><div class="t-meta"><span>City notebook</span><span class="chip why">Fictional task</span></div></div></div><div class="task" data-task="sample-city-photos" data-lane="tracked"><span class="pip block" aria-hidden="true"></span><div class="t-body"><div class="t-main">Wait for the sample image selection</div><div class="t-meta"><span>City notebook</span><span class="chip wait">Waiting · fictional images</span></div></div></div></details></div></details>
+<!-- END:tracked -->
+
+  <!-- BEGIN:reconciliation -->
+<div class="reconcile"><span><b id="count-today">3</b> Today</span><span class="dot">·</span><span><b id="count-week">3</b> This week</span><span class="dot">·</span><span><b id="count-radar">3</b> Radar</span><span class="dot">·</span><span><b id="count-tracked">6</b> Tracked</span><span class="dot">·</span><span>2 waiting</span><span class="dot">·</span><span><b id="count-open">12</b> open sample tasks</span><span class="dot">·</span><span class="ok" id="integrity-state">0 duplicate · 0 unclassified</span></div>
+<!-- END:reconciliation -->
+
+  <footer>The Compass directs. <b>TASKS.md</b> remembers everything.<br>Daily regeneration refreshes facts, not strategy.<br><span class="seal">羅</span></footer>
+</div>
+
+<script>
+  const THEME_KEY = "compass-theme";
+  function setTheme(theme){
+    document.body.setAttribute("data-theme", theme);
+    try{localStorage.setItem(THEME_KEY, theme);}catch(error){}
+    const select = document.getElementById("theme-select");
+    if(select) select.value = theme;
+  }
+  (function initTheme(){
+    let saved = "bluegold";
+    try{saved = localStorage.getItem(THEME_KEY) || "bluegold";}catch(error){}
+    setTheme(saved);
+  })();
+
+  const TICK_KEY = "compass-ticks";
+  const LANES = ["today", "week", "radar", "tracked"];
+  function targetDayKey(){
+    const target = document.querySelector("[data-target-day]");
+    const statedDay = target ? target.getAttribute("data-target-day") : "";
+    if(/^\d{4}-\d{2}-\d{2}$/.test(statedDay)) return statedDay;
+    const date = new Date();
+    return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate();
+  }
+  function loadTicks(){
+    try{
+      const stored = JSON.parse(localStorage.getItem(TICK_KEY) || "{}");
+      return stored.day === targetDayKey() ? (stored.done || []) : [];
+    }catch(error){return [];}
+  }
+  function saveTicks(done){
+    try{localStorage.setItem(TICK_KEY, JSON.stringify({day:targetDayKey(),done:[...new Set(done)]}));}catch(error){}
+  }
+  function allTaskNodes(){
+    return [...document.querySelectorAll(".task[data-task]")];
+  }
+  function nodesForTask(id){
+    return allTaskNodes().filter(node => node.getAttribute("data-task") === id);
+  }
+  function toggleTask(node){
+    const id = node.getAttribute("data-task");
+    let done = loadTicks();
+    done = done.includes(id) ? done.filter(item => item !== id) : [...done,id];
+    saveTicks(done);
+    applyTicks();
+  }
+  function applyTicks(){
+    const done = new Set(loadTicks());
+    const tickableIds = new Set(allTaskNodes().filter(node => node.classList.contains("tickable")).map(node => node.getAttribute("data-task")));
+    for(const id of tickableIds){
+      for(const node of nodesForTask(id)) node.classList.toggle("done", done.has(id));
+    }
+    updateReconciliation();
+  }
+  function updateReconciliation(){
+    const nodes = allTaskNodes();
+    const byId = new Map();
+    for(const node of nodes){
+      const id = node.getAttribute("data-task");
+      if(!byId.has(id)) byId.set(id, []);
+      byId.get(id).push(node);
+    }
+
+    const duplicates = [...byId.values()].filter(group => group.length > 1).length;
+    const unclassifiedIds = new Set(nodes.filter(node => !LANES.includes(node.getAttribute("data-lane"))).map(node => node.getAttribute("data-task")));
+    const counts = Object.fromEntries(LANES.map(lane => [lane,0]));
+    for(const group of byId.values()){
+      const lane = group[0].getAttribute("data-lane");
+      if(LANES.includes(lane)) counts[lane] += 1;
+    }
+
+    // A weekly direction can be an explicit AI proposal rather than a TASKS
+    // item. It has a lane but no data-task, so count it in the visible weekly
+    // moves without pretending it belongs to task-ledger coverage.
+    const displayedCounts = {...counts};
+    displayedCounts.week = document.querySelectorAll('[data-lane="week"]').length;
+
+    const done = new Set(loadTicks());
+    const open = [...byId.keys()].filter(id => !done.has(id)).length;
+    for(const lane of LANES){
+      const output = document.getElementById("count-"+lane);
+      if(output) output.textContent = displayedCounts[lane];
+    }
+    const openOutput = document.getElementById("count-open");
+    if(openOutput) openOutput.textContent = open;
+    const trackedSummary = document.getElementById("tracked-summary");
+    const trackedRoot = document.querySelector(".tracked");
+    const projectCount = document.querySelectorAll(".tracked-body > details.project").length;
+    const summarySuffix = trackedRoot ? (trackedRoot.getAttribute("data-summary-suffix") || "expand for full ledger") : "expand for full ledger";
+    if(trackedSummary) trackedSummary.textContent = counts.tracked+" commitments · "+projectCount+" projects · "+summarySuffix;
+
+    const integrity = document.getElementById("integrity-state");
+    if(integrity){
+      integrity.textContent = duplicates+" duplicate · "+unclassifiedIds.size+" unclassified";
+      integrity.className = duplicates || unclassifiedIds.size ? "bad" : "ok";
+    }
+  }
+  document.querySelectorAll(".task.tickable[data-task]").forEach(node => {
+    node.addEventListener("click", () => toggleTask(node));
+  });
+  applyTicks();
+</script>
+</body>
+</html>

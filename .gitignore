@@ -1,0 +1,3 @@
+# Personal working notes must not enter this public website repository.
+*.local.md
+_local/
